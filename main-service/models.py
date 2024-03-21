@@ -12,17 +12,3 @@ class Order(Base):
     price = Column(Float, nullable=False)
     side = Column(Integer, nullable=False)  # 1 for buy, -1 for sell
     alive = Column(Boolean, default=True)
-
-    trades = relationship('Trade', back_populates='order')
-
-class Trade(Base):
-    __tablename__ = 'trades'
-
-    id = Column(Integer, primary_key=True)
-    execution_timestamp = Column(DateTime, nullable=False)
-    price = Column(Float, nullable=False)
-    quantity = Column(Float, nullable=False)
-    bid_order_id = Column(Integer, ForeignKey('orders.id'))
-    ask_order_id = Column(Integer, ForeignKey('orders.id'))
-
-    order = relationship('Order', back_populates='trades')
