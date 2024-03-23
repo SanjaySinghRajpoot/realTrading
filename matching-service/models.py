@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+
 class Trade(Base):
     __tablename__ = 'trades'
 
@@ -11,7 +12,5 @@ class Trade(Base):
     execution_timestamp = Column(DateTime, nullable=False)
     price = Column(Float, nullable=False)
     quantity = Column(Float, nullable=False)
-    bid_order_id = Column(Integer, ForeignKey('orders.id'))
-    ask_order_id = Column(Integer, ForeignKey('orders.id'))
-
-    order = relationship('Order', back_populates='trades')
+    bid_order_id = Column(Integer,  nullable=False)
+    ask_order_id = Column(Integer,  nullable=False)
