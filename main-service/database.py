@@ -1,9 +1,12 @@
 import imp
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-DB_URL = "postgresql://postgres:postgres@localhost/realtrading?sslmode=disable"
+DB_URL = os.getenv('DATABASE_URI')
+
+# DB_URL = "postgresql://postgres:postgres@localhost/realtrading?sslmode=disable"
 
 engine = create_engine(DB_URL)
 

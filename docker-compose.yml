@@ -11,6 +11,30 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=realtrading
+  main-service:
+    build:
+      context: .
+      dockerfile: main-service/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./main-service:/app
+    environment:
+      - DATABASE_URI=postgresql://postgres:postgres@realtrading-db/realtrading?sslmode=disable
+    depends_on:
+      - db
+  matching-service:
+    build:
+      context: .
+      dockerfile: matching-service/Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./matching-service:/app
+    environment:
+      - DATABASE_URI=postgresql://postgres:postgres@realtrading-db/realtrading?sslmode=disable
+    depends_on:
+      - db
 
 networks:
   fullstack:

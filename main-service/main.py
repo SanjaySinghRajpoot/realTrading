@@ -3,12 +3,12 @@ from starlette.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import update
+from models import Order, Base
 from schemas import OrderCreate, OrderUpdate, OrderBase
 from database import SessionLocal, engine
 from typing import List
 import requests
 
-from models import Order, Base
 import uvicorn
 import asyncio
 
@@ -83,7 +83,7 @@ def cancel_order(order_id: int, db: Session = Depends(get_db)):
     return True
 
 # All orders
-@app.get("/orders", response_model=list[OrderBase])
+@app.get("/orders", response_model=List[OrderBase])
 def fetch_all_orders(db: Session = Depends(get_db)):
     return db.query(Order).all()
 
@@ -167,6 +167,3 @@ async def get():
     return HTMLResponse(html)
 
 
-
-if __name__ == "__main__":
- uvicorn.run("main:app", host="0.0.0.0", port=8080,reload=True)  
