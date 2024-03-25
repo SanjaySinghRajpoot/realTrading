@@ -12,3 +12,13 @@ class Order(Base):
     price = Column(Float, nullable=False)
     side = Column(Integer, nullable=False)  # 1 for buy, -1 for sell
     alive = Column(Boolean, default=True)
+
+class Trade(Base):
+    __tablename__ = 'trades'
+
+    id = Column(Integer, primary_key=True)
+    execution_timestamp = Column(DateTime, nullable=False)
+    price = Column(Float, nullable=False)
+    quantity = Column(Float, nullable=False)
+    bid_order_id = Column(Integer,  nullable=False)
+    ask_order_id = Column(Integer,  nullable=False)

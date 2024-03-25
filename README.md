@@ -26,7 +26,7 @@ This project is a simulation of an order API that allows users to place, modify,
 4. Run the PostgreSQL server using Docker Compose: `docker-compose up -d`
 5. Start the `main-service` and `matching-service` using uvicorn:
     - For `main-service`: `uvicorn main:app --reload --host 0.0.0.0 --port 8000`
-    - For `matching-service`: `uvicorn matching:app --reload --host 0.0.0.0 --port 8001`
+    - For `matching-service`: `uvicorn main:app --reload --host 0.0.0.0 --port 8001`
 6. Access the application through the provided endpoints:
     - `main-service` REST API: http://localhost:8000/
     - `matching-service` WebSocket for trade updates: ws://localhost:8001/trade_updates

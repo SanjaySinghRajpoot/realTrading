@@ -2,11 +2,19 @@ from fastapi import FastAPI, HTTPException, WebSocket, Depends, WebSocketDisconn
 from starlette.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from database import SessionLocal, engine
+from fastapi import APIRouter
 from sqlalchemy.orm import Session
-from schemas import Order
-from models import Trade
+from sqlalchemy import update
+from schemas import OrderBase
+from models import Trade, Order
+
 from datetime import datetime
 import uvicorn
+import schedule
+import time
+import asyncio
+
+router = APIRouter()
 
 
 app = FastAPI()
@@ -27,6 +35,8 @@ class MatchingEngine:
         self.connection = None  # Set to store WebSocket connections
 
     async def place_order(self, order, db):
+        print("getting orders")
+        print(order)
         if order.side == 1:  # Buy order
             await self.match_ask(order, db)
             if order.price in self.orders:
@@ -93,6 +103,16 @@ class MatchingEngine:
             db.add(trade)
             db.commit()
 
+            orderIds = []
+            orderIds.append(bid.order_id)
+            orderIds.append(ask.order_id)
+
+            # Construct the update query to set 'alive' to False for orders with the specified IDs
+            update_query = update(Order).where(Order.id.in_(orderIds)).values(alive=False)
+            db.execute(update_query)
+            db.commit()
+
+
             if self.connection is not None:
                     trade_data = {
                         "bid_order_id": bid.order_id,
@@ -110,7 +130,7 @@ class MatchingEngine:
 engine = MatchingEngine()
 
 @app.post("/place-order")
-async def place_order(order: Order, db: Session = Depends(get_db)):
+async def place_order(order: OrderBase, db: Session = Depends(get_db)):
     await engine.place_order(order, db)
     return {"message": "Order placed successfully"}
 
@@ -121,7 +141,7 @@ html = """
         <title>Chat</title>
     </head>
     <body>
-        <h1>WebSocket Chat</h1>
+        <h1>WebSocket Chat Trade</h1>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
@@ -163,3 +183,7 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         engine.connection = None # Remove WebSocket connection from the set
 
+# @router.on_event('startup')
+# @repeat_every(seconds=3)
+# async def print_hello():
+#     print("hello")

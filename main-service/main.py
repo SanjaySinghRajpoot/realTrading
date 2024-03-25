@@ -3,8 +3,8 @@ from starlette.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import update
-from models import Order, Base
-from schemas import OrderCreate, OrderUpdate, OrderBase
+from models import Order, Base, Trade
+from schemas import OrderCreate, OrderUpdate, OrderBase, TradeBase
 from database import SessionLocal, engine
 from typing import List
 import requests
@@ -49,7 +49,7 @@ def place_order(order: OrderCreate, db: Session = Depends(get_db)):
     "side": order.side
     }
 
-    url = "http://localhost:8001/place-order"  
+    url = "http://matching-service:8001/place-order"  
 
     response = requests.post(url, json=payload)
     print(response)
@@ -85,11 +85,12 @@ def cancel_order(order_id: int, db: Session = Depends(get_db)):
 # All orders
 @app.get("/orders", response_model=List[OrderBase])
 def fetch_all_orders(db: Session = Depends(get_db)):
-    return db.query(Order).all()
+    return db.query(Order).limit(100).all()
 
 # get all trades from the trades table
-
-
+@app.get("/trades", response_model=List[TradeBase])
+def fetch_all_orders(db: Session = Depends(get_db)):
+    return db.query(Trade).limit(100).all()
 
 # Background task to send order book snapshot to WebSocket clients
 async def send_order_book_snapshot(websocket: WebSocket, db: Session):
