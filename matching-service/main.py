@@ -107,7 +107,6 @@ class MatchingEngine:
             orderIds.append(bid.order_id)
             orderIds.append(ask.order_id)
 
-            # Construct the update query to set 'alive' to False for orders with the specified IDs
             update_query = update(Order).where(Order.id.in_(orderIds)).values(alive=False)
             db.execute(update_query)
             db.commit()

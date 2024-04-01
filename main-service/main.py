@@ -25,10 +25,6 @@ def get_db():
     finally:
         db.close()
 
-# @app.get("/")
-# async def home(db: Session = Depends(get_db)):
-#     return {"message":"hello world"}
-
 
 # Place order
 @app.post("/orders", response_model=int)
@@ -116,9 +112,7 @@ async def websocket_endpoint(websocket: WebSocket, background_tasks: BackgroundT
     await websocket.accept()
     try:
         # Add WebSocket connection to the background task
-        # await websocket.send_text("websocekt is working")
         print("WebSocket connection established.")
-        # background_tasks.add_task(send_order_book_snapshot, websocket, db)
         asyncio.create_task(send_order_book_snapshot(websocket, db))
         # Keep the WebSocket connection open
         while True:
