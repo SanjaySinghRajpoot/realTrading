@@ -5,7 +5,7 @@ html = """
         <title>Chat</title>
     </head>
     <body>
-        <h1>WebSocket Chat Trade</h1>
+        <h1>WebSocket Chat</h1>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
@@ -13,7 +13,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8001/ws");
+            var ws = new WebSocket("ws://localhost:8000/ws_order_book");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
