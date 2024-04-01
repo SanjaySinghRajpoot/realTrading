@@ -4,7 +4,8 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 from models import Order, Base, Trade
-from schemas import OrderCreate, OrderUpdate, OrderBase, TradeBase
+from sqlalchemy import func 
+from schemas import OrderCreate, OrderUpdate, OrderBase, TradeBase, GetOrderBase
 from database import SessionLocal, engine
 from typing import List
 from utils import html
@@ -56,7 +57,7 @@ def place_order(order: OrderCreate, db: Session = Depends(get_db)):
     return db_order.id
 
 # Modify order
-@app.put("/orders/{order_id}/", response_model=bool)
+@app.put("/orders/{order_id}", response_model=bool)
 def modify_order(order_id: int, order_update: OrderUpdate, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
@@ -83,6 +84,27 @@ def cancel_order(order_id: int, db: Session = Depends(get_db)):
 @app.get("/orders", response_model=List[OrderBase])
 def fetch_all_orders(db: Session = Depends(get_db)):
     return db.query(Order).limit(100).all()
+
+@app.get("/orders/{order_id}", response_model=GetOrderBase)
+def fetch_order_details(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Calculate average traded price and traded quantity for the order
+    trade_info = db.query(func.avg(Trade.price), func.sum(Trade.quantity)).filter(
+        (Trade.bid_order_id == order_id) | (Trade.ask_order_id == order_id)
+    ).first()
+    average_traded_price = trade_info[0] if trade_info[0] else 0.0
+    traded_quantity = trade_info[1] if trade_info[1] else 0.0
+    
+    return {
+        "order_price": order.price,
+        "order_quantity": order.quantity,
+        "average_traded_price": average_traded_price,
+        "traded_quantity": traded_quantity,
+        "order_alive": order.alive
+    }
 
 # get all trades from the trades table
 @app.get("/trades", response_model=List[TradeBase])

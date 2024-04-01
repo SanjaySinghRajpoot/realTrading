@@ -16,6 +16,15 @@ class OrderBase(BaseModel):
     side: int
     alive: bool
 
+# Response models
+class GetOrderBase(BaseModel):
+    order_price: float
+    order_quantity: float
+    average_traded_price: float
+    traded_quantity: float
+    order_alive: bool
+
+
 class TradeBase(BaseModel):
     execution_timestamp: datetime
     price: float
