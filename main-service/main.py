@@ -53,7 +53,6 @@ def place_order(order: OrderCreate, db: Session = Depends(get_db)):
     print(response)
 
     #send a http request to matching service
-
     return db_order.id
 
 # Modify order
@@ -142,10 +141,6 @@ async def websocket_endpoint(websocket: WebSocket, background_tasks: BackgroundT
             await websocket.receive_text()
     except Exception as e:
         print("Error:", e)
-
-
-
-
 
 
 @app.get("/")

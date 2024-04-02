@@ -17,7 +17,6 @@ import asyncio
 
 router = APIRouter()
 
-
 app = FastAPI()
 
 # Dependency
@@ -32,7 +31,7 @@ def get_db():
 
 class MatchingEngine:
     def __init__(self):
-        self.orders = {}
+        self.orders = {} # Saving orders in List format 
         self.connection = None  # Set to store WebSocket connections
 
     async def place_order(self, order, db):
@@ -108,6 +107,7 @@ class MatchingEngine:
             orderIds.append(bid.order_id)
             orderIds.append(ask.order_id)
 
+            # Single SQL query to update multiple ids
             update_query = update(Order).where(Order.id.in_(orderIds)).values(alive=False)
             db.execute(update_query)
             db.commit()
