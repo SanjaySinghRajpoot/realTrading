@@ -2,6 +2,9 @@
 
 This project is a simulation of an order API that allows users to place, modify, cancel, and fetch orders for buying and selling instruments/stocks. It includes functionalities to provide a CRUD interface, a WebSocket for trade updates, and another WebSocket for order book snapshots. The system is divided into two microservices: `main-service` and `matching-service`, connected to a central PostgreSQL database called `realtrading-db`.
 
+
+[working demo](https://www.loom.com/share/48e66c3c23cf4f219a1b1c2ad73ea9cc?sid=66a80b9a-f477-471e-97f8-d03804b376ce)
+
 ## Features
 
 ### 1. CRUD Interface
